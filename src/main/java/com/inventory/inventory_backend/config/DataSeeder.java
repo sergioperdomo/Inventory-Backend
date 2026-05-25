@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
 
@@ -23,7 +24,8 @@ public class DataSeeder {
             SupplierRepository suppliers,
             ProductRepository products,
             StockMovementRepository movements,
-            UserRepository users
+            UserRepository users,
+            PasswordEncoder passwordEncoder
     ) {
         return args -> {
             // Sólo insertar si la base está vacía
@@ -81,10 +83,10 @@ public class DataSeeder {
             // Usuario admin de prueba (en semana 5 agregaremos bcrypt)
             users.save(User.builder()
                     .username("admin").email("admin@inventory.com")
-                    .password("admin123").role(Role.ADMIN).build());
+                    .password(passwordEncoder.encode("admin123")).role(Role.ADMIN).build());
             users.save(User.builder()
                     .username("empleado1").email("empleado1@inventory.com")
-                    .password("emp123").role(Role.EMPLOYEE).build());
+                    .password(passwordEncoder.encode("emp123")).role(Role.EMPLOYEE).build());
 
             log.info("✅ Datos de prueba insertados correctamente.");
         };
