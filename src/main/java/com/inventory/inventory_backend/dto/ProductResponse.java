@@ -13,7 +13,9 @@ public record ProductResponse(
         Integer stockQuantity,
         Integer minStockAlert,
         boolean lowStock,           // true cuando stock <= minStockAlert
+        Long categoryId,
         String categoryName,
+        Long supplierId,
         String supplierName
 ) {
     public static ProductResponse from(Product p) {
@@ -26,7 +28,9 @@ public record ProductResponse(
                 p.getStockQuantity(),
                 p.getMinStockAlert(),
                 p.isLowStock(),
+                p.getCategory() != null ? p.getCategory().getId()   : null,
                 p.getCategory() != null ? p.getCategory().getName() : null,
+                p.getSupplier()  != null ? p.getSupplier().getId()    : null,
                 p.getSupplier()  != null ? p.getSupplier().getName()  : null
         );
     }
