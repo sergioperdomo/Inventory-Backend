@@ -1,23 +1,61 @@
-version: '3.8'
-
 services:
   mysql:
     image: mysql:8.0
     container_name: inventory-mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: rootpass
       MYSQL_DATABASE: inventory_db
-      MYSQL_USER: root
-      MYSQL_PASSWORD: Teamopapa$00
+      MYSQL_ROOT_PASSWORD: Teamopapa$00
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 10s
       retries: 5
+    networks:
+      - inventory-network
+
+  # ─── Backend Spring Boot ──────────────────────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: inventory-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/inventory_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: "Teamopapa$00"
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+      JWT_SECRET: InventarioSecretKey2024XyZ987654321Ab
+      JWT_EXPIRATION: 86400000
+    ports:
+      - "8080:8080"
+    networks:
+      - inventory-network
+
+  # ─── Frontend Angular ─────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ../inventory-frontend
+      dockerfile: Dockerfile
+    container_name: inventory-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"
+    networks:
+      - inventory-network
+
+networks:
+  inventory-network:
+    name: inventory-network
 
 volumes:
   mysql_data:
