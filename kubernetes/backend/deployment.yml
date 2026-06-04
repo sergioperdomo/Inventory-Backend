@@ -15,20 +15,20 @@ spec:
     spec:
       containers:
         - name: backend
-          image: docker.io/library/inventory-backend-backend:latest
+          image: inventory-backend-backend:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
           env:
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:mysql://mysql:3306/inventory_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+              value: jdbc:postgresql://postgres:5432/inventory_db
             - name: SPRING_DATASOURCE_USERNAME
-              value: root
+              value: postgres
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mysql-secret
-                  key: root-password
+                  name: postgres-secret
+                  key: postgres-password
             - name: SPRING_JPA_HIBERNATE_DDL_AUTO
               value: create-drop
             - name: JWT_SECRET

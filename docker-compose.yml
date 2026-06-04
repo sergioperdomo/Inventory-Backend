@@ -1,17 +1,20 @@
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: inventory-mysql
+
+  # ─── Base de datos PostgreSQL ─────────────────────────────────────────────
+  postgres:
+    image: postgres:16
+    container_name: inventory-postgres
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: inventory_db
-      MYSQL_ROOT_PASSWORD: Teamopapa$00
+      POSTGRES_DB: inventory_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
-      - "3307:3306"
+      - "5432:5432"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       timeout: 10s
       retries: 5
     networks:
@@ -25,12 +28,12 @@ services:
     container_name: inventory-backend
     restart: unless-stopped
     depends_on:
-      mysql:
+      postgres:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/inventory_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: "Teamopapa$00"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/inventory_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
       JWT_SECRET: InventarioSecretKey2024XyZ987654321Ab
       JWT_EXPIRATION: 86400000
@@ -58,5 +61,5 @@ networks:
     name: inventory-network
 
 volumes:
-  mysql_data:
-    name: inventory_mysql_data
+  postgres_data:
+    name: inventory_postgres_data
