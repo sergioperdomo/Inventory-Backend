@@ -34,7 +34,9 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
-                                "/api-docs/**"
+                                "/api-docs/**",
+                                "/v3/api-docs/**",
+                                "/webjars/**"
                         ).permitAll()
                         // Solo ADMIN puede crear, editar y eliminar
                         .requestMatchers(HttpMethod.POST,   "/api/**").hasRole("ADMIN")
