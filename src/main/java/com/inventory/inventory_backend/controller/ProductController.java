@@ -4,6 +4,7 @@ import com.inventory.inventory_backend.dto.ProductRequest;
 import com.inventory.inventory_backend.dto.ProductResponse;
 import com.inventory.inventory_backend.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.List;
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
 @Tag(name = "Productos", description = "CRUD de productos e inventario")
+@SecurityRequirement(name = "bearerAuth")
 public class ProductController {
 
 
